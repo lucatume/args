@@ -36,4 +36,110 @@ class ArgTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertInstanceOf( $class, $sut );
 	}
+
+	/**
+	 * @test
+	 * it should allow asserting
+	 */
+	public function it_should_allow_asserting() {
+		$sut     = Arg::_( 'foo' );
+		$message = 'Foo!';
+		$this->setExpectedException( 'InvalidArgumentException', $message );
+
+		$sut->assert( false, $message );
+	}
+
+	/**
+	 * @test
+	 * it should allow defaulting an array
+	 */
+	public function it_should_allow_defaulting_an_array() {
+		$model = [ 'foo' => 'baz', 'some' => 'more' ];
+		$in    = [ 'some' => 23, 'bar' => 21 ];
+
+		$sut = Arg::_( $in )->defaults( $model );
+
+		$default = [ 'foo' => 'baz', 'some' => 23, 'bar' => 21 ];
+		$this->assertEquals( $default, $sut->value );
+	}
+
+	/**
+	 * @test
+	 * it should allow checking an array structure
+	 */
+	public function it_should_allow_checking_an_array_structure() {
+		$model = array(
+			'key1' => null,
+			'key2' => null,
+			'key3' => array(
+				'key1' => null,
+				'key2' => null
+			)
+		);
+
+		$arr = array(
+			'key1' => 'some',
+			'key2' => 23,
+			'key3' => array(
+				'key1' => 24,
+				'key2' => 12
+			)
+		);
+
+		$sut = Arg::_( $arr )->has_structure( $model );
+
+		$this->setExpectedException( 'InvalidArgumentException' );
+		$sut = Arg::_( [ 'foo' => 'baz' ] )->has_structure( $model );
+	}
+
+	/**
+	 * @test
+	 * it should allow checking an object has a property
+	 */
+	public function it_should_allow_checking_an_object_has_a_property() {
+		$obj       = new stdClass();
+		$obj->some = 'foo';
+		$sut       = Arg::_( $obj )->is_set( 'some' );
+
+		$this->setExpectedException( 'InvalidArgumentException' );
+		$sut->is_set( 'more' );
+	}
+
+	/**
+	 * @test
+	 * it should allow checkin an object has many properties
+	 */
+	public function it_should_allow_checkin_an_object_has_many_properties() {
+		$obj       = new stdClass();
+		$obj->some = 'foo';
+		$obj->foo  = 21;
+		$sut       = Arg::_( $obj )->is_set( 'some', 'foo' );
+
+		$this->setExpectedException( 'InvalidArgumentException' );
+		$sut->is_set( 'more', 'one' );
+	}
+
+	/**
+	 * @test
+	 * it should allow setting negation using not
+	 */
+	public function it_should_allow_setting_negation_using_not() {
+		$obj       = new stdClass();
+		$sut       = Arg::_( $obj )->not();
+
+		$this->assertEquals(false, $sut->match_true);
+	}
+
+	/**
+	 * @test
+	 * it should allow setting negation for next method using not
+	 */
+	public function it_should_allow_setting_negation_for_next_method_using_not() {
+		$obj       = new stdClass();
+		$obj->some = 'foo';
+		$obj->foo  = 21;
+		$this->setExpectedException( 'InvalidArgumentException' );
+
+		$sut = Arg::_( $obj )->not()->is_set( 'some' );
+	}
 }
