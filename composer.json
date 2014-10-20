@@ -1,0 +1,16 @@
+{
+    "name": "lucatume/args",
+    "description": "A PHP 5.2 compatible arguments handling library.",
+    "require-dev": {
+        "codeception/codeception": "*"
+    },
+    "license": "GPL2",
+    "authors": [
+        {
+            "name": "Luca Tumedei",
+            "email": "luca@theaveragedev.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
