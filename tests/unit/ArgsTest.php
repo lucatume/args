@@ -124,10 +124,10 @@ class ArgTest extends \PHPUnit_Framework_TestCase {
 	 * it should allow setting negation using not
 	 */
 	public function it_should_allow_setting_negation_using_not() {
-		$obj       = new stdClass();
-		$sut       = Arg::_( $obj )->not();
+		$obj = new stdClass();
+		$sut = Arg::_( $obj )->not();
 
-		$this->assertEquals(false, $sut->match_true);
+		$this->assertEquals( false, $sut->match_true );
 	}
 
 	/**
@@ -142,4 +142,39 @@ class ArgTest extends \PHPUnit_Framework_TestCase {
 
 		$sut = Arg::_( $obj )->not()->is_set( 'some' );
 	}
+
+	/**
+	 * @test
+	 * it should allow checking minimum string length
+	 */
+	public function it_should_allow_checking_minimum_string_length() {
+		Arg::_( 'some' )->length( 0, 4 );
+		$this->setExpectedException( 'InvalidArgumentException' );
+
+		$sut = Arg::_( 'foo' )->length( 10 );
+	}
+
+	/**
+	 * @test
+	 * it should allow cecking max string length
+	 */
+	public function it_should_allow_cecking_max_string_length() {
+
+		Arg::_( 'some' )->length( 0, 4 );
+		$this->setExpectedException( 'InvalidArgumentException' );
+
+		$sut = Arg::_( 'lorem ipsum' )->length( 0, 3 );
+	}
+
+	/**
+	 * @test
+	 * it should allow checking if string matches pattern
+	 */
+	public function it_should_allow_checking_if_string_matches_pattern() {
+		$sut = Arg::_( 'lorem ipsum' )->match( '/\\w+\\s+\\w+/' );
+		$this->setExpectedException( 'InvalidArgumentException' );
+//		$this->assertTrue( preg_match( "/\\w+\\s+\\w+/um", 'lorem ipsum' ));
+		$sut = Arg::_( 'lorem ipsum' )->match( '/\\w+\\s+\\d+/' );
+	}
+
 }

@@ -1,6 +1,8 @@
 <?php
 
 
+use Doctrine\Instantiator\Exception\InvalidArgumentException;
+
 class Arg {
 
 	/** @var  Arg_Object */
@@ -229,6 +231,23 @@ class  Double_Arg extends Scalar_Arg {
 
 class  String_Arg extends Scalar_Arg {
 
+	public function length( $min, $max = null ) {
+		$len = strlen( $this->value );
+		if ( $this->match_true !== ( $len >= $min ) ) {
+			throw new InvalidArgumentException( $this->name . ' must have a minimum length of ' . $min );
+		}
+		if ( $max && $this->match_true !== ( $len <= $max ) ) {
+			throw new InvalidArgumentException( $this->name . ' must have a maximum length of ' . $max );
+		}
+
+		return $this;
+	}
+
+	public function match( $pattern ) {
+		if ( $this->match_true !== (bool) preg_match( $pattern, $this->value ) ) {
+			throw new InvalidArgumentException( $this->name . ' must' . $this->get_negation() . ' match pattern ' . $pattern );
+		}
+	}
 }
 
 
