@@ -8,7 +8,7 @@ class Arg {
 
 	public function __construct( $arg, $arg_name = null ) {
 		$type      = gettype( $arg );
-		$arg_name  = $arg_name ? $arg_name : '' . $arg;
+		$arg_name  = $arg_name ? $arg_name : $type;
 		$this->arg = $this->get_arg_for_type( $type, $arg, $arg_name );
 	}
 
