@@ -253,6 +253,18 @@ class  String_Arg extends Scalar_Arg {
 
 class  Array_Arg extends Arg_Object {
 
+	public function count( $min, $max = null ) {
+		$count = count( $this->value );
+		if ( $this->match_true !== ( $count >= $min ) ) {
+			throw new InvalidArgumentException( $this->name . ' must contain at least ' . $min . ' elements' );
+		}
+		if ( $max && $this->match_true !== ( $count <= $max ) ) {
+			throw new InvalidArgumentException( $this->name . ' must contain at most ' . $max . ' elements' );
+		}
+
+		return $this;
+	}
+
 	public function has_structure( $structure ) {
 		if ( $this->match_true !== array_has_structure( $this->value, $structure ) ) {
 			throw new InvalidArgumentException( $this->name . ' must' . $this->get_negation() . ' have the structure\\n' . print_r( $structure, true ) );

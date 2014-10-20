@@ -177,4 +177,19 @@ class ArgTest extends \PHPUnit_Framework_TestCase {
 		$sut = Arg::_( 'lorem ipsum' )->match( '/\\w+\\s+\\d+/' );
 	}
 
+	/**
+	 * @test
+	 * it should allow checkin an array count
+	 */
+	public function it_should_allow_checkin_an_array_count() {
+		Arg::_( [ 1, 2, 3, 4, 5, 6, 7, 8 ] )->count( 2, 10 );
+
+		$this->setExpectedException( 'InvalidArgumentException' );
+
+		Arg::_( [ 1, 2, 3 ] )->count( 4 );
+
+		$this->setExpectedException( 'InvalidArgumentException' );
+
+		Arg::_( [ 1, 2, 3, 4, 5, 6, 7 ] )->count( 2, 5 );
+	}
 }
