@@ -192,4 +192,13 @@ class ArgTest extends \PHPUnit_Framework_TestCase {
 
 		Arg::_( [ 1, 2, 3, 4, 5, 6, 7 ] )->count( 2, 5 );
 	}
+
+	/**
+	 * @test
+	 * it should allow specifying an OR condition
+	 */
+	public function it_should_allow_specifying_an_or_condition() {
+		$this->setExpectedException('InvalidArgumentException');
+		Arg::_('foo')->is_int();
+	}
 }
