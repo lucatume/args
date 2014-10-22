@@ -195,10 +195,32 @@ class ArgTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
+	 * it should normally throw for the first exception
+	 */
+	public function it_should_normally_throw_for_the_first_exception() {
+		$message = 'Foo must be a boolean';
+		$this->setExpectedException('InvalidArgumentException', $message);
+
+		Arg::_(23, 'Foo')->is_bool()->is_scalar();
+	}
+
+	/**
+	 * @test
+	 * it should allow setting a passing or condition
+	 */
+	public function it_should_allow_setting_a_passing_or_condition() {
+		$passed = Arg::_('foo')->is_int()->_or()->is_string()->did_pass();
+
+		$this->assertTrue($passed);
+	}
+
+	/**
+	 * @test
 	 * it should allow specifying an OR condition
 	 */
 	public function it_should_allow_specifying_an_or_condition() {
 		$this->setExpectedException('InvalidArgumentException');
-		Arg::_('foo')->is_int();
+
+		Arg::_('foo')->is_int()->_or()->is_array();
 	}
 }

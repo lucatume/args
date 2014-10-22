@@ -50,12 +50,24 @@
 		/**
 		 * @var bool
 		 */
-		protected $skip = true;
+		protected $skip = false;
 
 		/**
 		 * @var string
 		 */
 		protected $message = '';
+
+		/**
+		 * @var bool/string
+		 */
+		protected $reason = false;
+		/**
+		 * @var bool/string
+		 */
+		protected $previous_reason = false;
+
+		/** @var  bool */
+		protected $or_condition;
 
 		/**
 		 * @return string
@@ -79,14 +91,24 @@
 			$this->name = $name;
 		}
 
+		public function __destruct() {
+			if ( $this->reason ) {
+				throw new InvalidArgumentException( $this->reason );
+			}
+		}
+
 		public function get_name() {
 			return $this->name;
 		}
 
 		public function assert( $condition, $reason ) {
-			if ( ! $condition ) {
-
-				throw new InvalidArgumentException( $reason );
+			if ( ! $condition && ! $this->skip ) {
+				$this->reason = $this->reason ? $this->reason . ' or ' . $reason : $reason;
+				$this->skip = true;
+			} else if ( $condition && $this->or_condition ) {
+				$this->skip = false;
+				$this->reason = false;
+				$this->or_condition = false;
 			}
 
 			return $this;
@@ -125,6 +147,10 @@
 			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a scalar.' );
 
 			return $this;
+		}
+
+		public function did_pass() {
+			return ! (bool) $this->reason;
 		}
 
 		public function is_int() {
@@ -179,7 +205,7 @@
 		}
 
 		public function _or() {
-			$this->skip = false;
+			$this->or_condition = true;
 
 			return $this;
 		}
