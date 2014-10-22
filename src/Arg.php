@@ -205,13 +205,13 @@
 		}
 
 		public function vel() {
-			$this->or_condition = true;
-
-			return $this;
+			return $this->_or();
 		}
 
 		public function _or() {
-			return $this->vel();
+			$this->or_condition = true;
+
+			return $this;
 		}
 
 		public function aut() {
