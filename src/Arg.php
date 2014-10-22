@@ -204,10 +204,18 @@
 			$this->match_true = true;
 		}
 
-		public function _or() {
+		public function vel() {
 			$this->or_condition = true;
 
 			return $this;
+		}
+
+		public function _or() {
+			return $this->vel();
+		}
+
+		public function aut() {
+			return $this->vel();
 		}
 
 	}

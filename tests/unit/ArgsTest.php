@@ -209,7 +209,7 @@ class ArgTest extends \PHPUnit_Framework_TestCase {
 	 * it should allow setting a passing or condition
 	 */
 	public function it_should_allow_setting_a_passing_or_condition() {
-		$passed = Arg::_('foo')->is_int()->_or()->is_string()->did_pass();
+		$passed = Arg::_('foo')->is_int()->vel()->is_string()->did_pass();
 
 		$this->assertTrue($passed);
 	}
@@ -221,6 +221,6 @@ class ArgTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_allow_specifying_an_or_condition() {
 		$this->setExpectedException('InvalidArgumentException');
 
-		Arg::_('foo')->is_int()->_or()->is_array();
+		Arg::_('foo')->is_int()->vel()->is_array();
 	}
 }
