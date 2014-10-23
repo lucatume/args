@@ -267,6 +267,11 @@
 				$this->setExpectedException( $exception );
 
 				Arg::_( 'foo' )->is_int();
+
+				Arg::set_exception( '\\' . $exception );
+				$this->setExpectedException( $exception );
+
+				Arg::_( 'foo' )->is_int();
 			}
 		}
 	}
