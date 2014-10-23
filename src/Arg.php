@@ -38,6 +38,10 @@
 			}
 			self::$exception = $exception;
 		}
+
+		public static function reset_exception() {
+			self::$exception = null;
+		}
 	}
 
 
@@ -154,6 +158,7 @@
 		}
 
 		public function is_associative_array() {
+			$this->is_array();
 			$condition = $this->match_true === is_associative_array( $this->value );
 			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an associative array.' );
 
@@ -327,6 +332,13 @@
 			return $this;
 		}
 
+		public function extends_structure( $structure ) {
+			$condition = $this->match_true === array_extends_structure( $this->value, $structure );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' extend the structure\\n' . print_r( $structure, true ) );
+
+			return $this;
+		}
+
 		public function defaults( $defaults ) {
 			$this->value = array_merge( $defaults, $this->value );
 
@@ -398,5 +410,15 @@
 			$has_structure = count( $diffed ) === 0;
 
 			return $has_structure;
+		}
+	}
+
+	if ( ! function_exists( 'array_extends_structure' ) ) {
+		function array_extends_structure( array $arr, array $structure ) {
+			$merged = @array_merge_recursive( $arr, $structure );
+			$diffed = @array_diff( $merged, $arr );
+			$same_structure = count( @array_intersect_key( $structure, $diffed ) ) === 0;
+
+			return $same_structure;
 		}
 	}

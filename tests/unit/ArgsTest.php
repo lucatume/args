@@ -11,6 +11,7 @@
 		class ArgTest extends \PHPUnit_Framework_TestCase {
 
 			protected function setUp() {
+				Arg::reset_exception();
 			}
 
 			protected function tearDown() {
@@ -273,5 +274,38 @@
 
 				Arg::_( 'foo' )->is_int();
 			}
+
+			/**
+			 * @test
+			 * it should allow checking if an array extends a structure
+			 */
+			public function it_should_allow_checking_if_an_array_extends_a_structure() {
+				$model = array(
+					'key1' => null,
+					'key2' => null,
+					'key3' => array(
+						'key1' => null,
+						'key2' => null
+					)
+				);
+
+				$arr = array(
+					'key1' => 'some',
+					'key2' => 23,
+					'key3' => array(
+						'key1' => 24,
+						'key2' => 12
+					),
+					'key4' => 'some',
+					'key5' => 14
+				);
+
+				$sut = Arg::_( $arr )->extends_structure( $model );
+
+				$this->setExpectedException( 'InvalidArgumentException' );
+				$sut = Arg::_( [ 'foo' => 'baz' ] )->extends_structure( $model );
+			}
 		}
+
+
 	}
