@@ -5,6 +5,11 @@
 
 	class Arg {
 
+		/**
+		 * @var string
+		 */
+		protected static $exception;
+
 		/** @var  Arg_Object */
 		protected $arg;
 
@@ -18,13 +23,20 @@
 			$class_name = ucwords( $type . '_Arg' );
 			$class_name = str_replace( ' ', '_', $class_name );
 
-			return new $class_name( $type, $arg, $arg_name );
+			return new $class_name( $type, $arg, $arg_name, self::$exception );
 		}
 
 		public static function _( $arg, $arg_name = null ) {
 			$instance = new self( $arg, $arg_name );
 
 			return $instance->arg;
+		}
+
+		public static function set_exception( $exception ) {
+			if ( ! class_exists( $exception ) ) {
+				throw new InvalidArgumentException( "$exception is not a defined class" );
+			}
+			self::$exception = $exception;
 		}
 	}
 
@@ -70,6 +82,11 @@
 		protected $or_condition;
 
 		/**
+		 * @var string
+		 */
+		protected $excpeption;
+
+		/**
 		 * @return string
 		 */
 		protected function get_negation() {
@@ -85,15 +102,16 @@
 			return $this;
 		}
 
-		public function __construct( $type, $value, $name ) {
+		public function __construct( $type, $value, $name, $exception ) {
 			$this->type = $type;
 			$this->value = $value;
 			$this->name = $name;
+			$this->excpeption = $exception ? $exception : 'InvalidArgumentException';
 		}
 
 		public function __destruct() {
 			if ( $this->reason ) {
-				throw new InvalidArgumentException( $this->reason );
+				throw new $this->excpeption( $this->reason );
 			}
 		}
 
