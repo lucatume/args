@@ -10,7 +10,7 @@
 		 */
 		protected static $exception;
 
-		/** @var  Arg_Object */
+		/** @var  ArgObject */
 		protected $arg;
 
 		public function __construct( $arg, $arg_name = null ) {
@@ -20,8 +20,8 @@
 		}
 
 		private function get_arg_for_type( $type, $arg, $arg_name ) {
-			$class_name = ucwords( $type . '_Arg' );
-			$class_name = str_replace( ' ', '_', $class_name );
+			$class_name = ucwords( $type . 'Arg' );
+			$class_name = str_replace( ' ', '', $class_name );
 
 			return new $class_name( $type, $arg, $arg_name, self::$exception );
 		}
@@ -45,7 +45,7 @@
 	}
 
 
-	abstract class Arg_Object {
+	abstract class ArgObject {
 
 		/**
 		 * @var mixed
@@ -270,7 +270,7 @@
 	}
 
 
-	abstract class Scalar_Arg extends Arg_Object {
+	abstract class ScalarArg extends ArgObject {
 
 		public function at_least( $value ) {
 			$condition = $this->match_true === $this->value < $value;
@@ -304,22 +304,22 @@
 	}
 
 
-	class  Boolean_Arg extends Scalar_Arg {
+	class  BooleanArg extends ScalarArg {
 
 	}
 
 
-	class  Integer_Arg extends Scalar_Arg {
+	class  IntegerArg extends ScalarArg {
 
 	}
 
 
-	class  Double_Arg extends Scalar_Arg {
+	class  DoubleArg extends ScalarArg {
 
 	}
 
 
-	class  String_Arg extends Scalar_Arg {
+	class  StringArg extends ScalarArg {
 
 		public function length( $min, $max = null ) {
 			$len = strlen( $this->value );
@@ -339,7 +339,7 @@
 	}
 
 
-	class  Array_Arg extends Arg_Object {
+	class  ArrayArg extends ArgObject {
 
 		public function count( $min, $max = null ) {
 			$count = count( $this->value );
@@ -394,7 +394,7 @@
 	}
 
 
-	class  Object_Arg extends Arg_Object {
+	class  ObjectArg extends ArgObject {
 
 		public function is_set( $property ) {
 			$properties = func_get_args();
@@ -408,17 +408,17 @@
 	}
 
 
-	class  Resource_Arg extends Arg_Object {
+	class  ResourceArg extends ArgObject {
 
 	}
 
 
-	class  NULL_Arg extends Arg_Object {
+	class  NULLArg extends ArgObject {
 
 	}
 
 
-	class  Unknown_Type_Arg extends Arg_Object {
+	class  UnknownTypeArg extends ArgObject {
 
 	}
 

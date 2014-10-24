@@ -19,18 +19,18 @@
 
 			public function args() {
 				return [
-					[ false, 'Boolean_Arg' ],
-					[ true, 'Boolean_Arg' ],
-					[ 0, 'Integer_Arg' ],
-					[ 23, 'Integer_Arg' ],
-					[ 32.3, 'Double_Arg' ],
-					[ 1.0, 'Double_Arg' ],
-					[ 'foo', 'String_Arg' ],
-					[ '', 'String_Arg' ],
-					[ new stdClass(), 'Object_Arg' ],
-					[ null, 'NULL_Arg' ],
-					[ [ ], 'Array_Arg' ],
-					[ [ 'foo', 21 ], 'Array_Arg' ]
+					[ false, 'BooleanArg' ],
+					[ true, 'BooleanArg' ],
+					[ 0, 'IntegerArg' ],
+					[ 23, 'IntegerArg' ],
+					[ 32.3, 'DoubleArg' ],
+					[ 1.0, 'DoubleArg' ],
+					[ 'foo', 'StringArg' ],
+					[ '', 'StringArg' ],
+					[ new stdClass(), 'ObjectArg' ],
+					[ null, 'NULLArg' ],
+					[ [ ], 'ArrayArg' ],
+					[ [ 'foo', 21 ], 'ArrayArg' ]
 				];
 			}
 
