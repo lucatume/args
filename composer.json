@@ -27,6 +27,6 @@
         ]
     },
     "autoload": {
-        "psr-0": {"Arg": "src/"}
+        "psr-0": {"": "src/"}
     }
 }

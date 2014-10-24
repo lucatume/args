@@ -91,6 +91,11 @@
 		protected $excpeption;
 
 		/**
+		 * @var Check
+		 */
+		protected $check_state;
+
+		/**
 		 * @return string
 		 */
 		protected function get_negation() {
@@ -106,16 +111,17 @@
 			return $this;
 		}
 
-		public function __construct( $type, $value, $name, $exception ) {
+		public function __construct( $type, $value, $name, $exception, CheckState $checkState = null ) {
 			$this->type = $type;
 			$this->value = $value;
 			$this->name = $name;
 			$this->excpeption = $exception ? $exception : 'InvalidArgumentException';
+			$this->check_state = $checkState ? $checkState : new Check( new PassingCheckState() );
 		}
 
 		public function __destruct() {
-			if ( $this->reason ) {
-				throw new $this->excpeption( $this->reason );
+			if ( ! $this->check_state->is_passing() ) {
+				$this->throw_exception( $this->reason );
 			}
 		}
 
@@ -123,14 +129,22 @@
 			return $this->name;
 		}
 
+		/**
+		 * @param $condition
+		 * @param $reason
+		 *
+		 * @return $this
+		 */
 		public function assert( $condition, $reason ) {
-			if ( ! $condition && ! $this->skip ) {
-				$this->reason = $this->reason ? $this->reason . ' or ' . $reason : $reason;
-				$this->skip = true;
-			} else if ( $condition && $this->or_condition ) {
-				$this->skip = false;
-				$this->reason = false;
-				$this->or_condition = false;
+			if ( $this->check_state->is_failed() ) {
+				$this->throw_exception( $reason );
+			}
+
+			if ( ! $condition ) {
+				$this->check_state->fail();
+				$this->reason = $reason;
+			} else {
+				$this->check_state->pass();
 			}
 
 			return $this;
@@ -138,7 +152,7 @@
 
 		public function is_bool() {
 			$condition = $this->match_true === is_bool( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a boolean.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a boolean' );
 
 			return $this;
 		}
@@ -173,7 +187,7 @@
 		}
 
 		public function did_pass() {
-			return ! (bool) $this->reason;
+			return $this->check_state->is_passing();
 		}
 
 		public function is_int() {
@@ -197,28 +211,28 @@
 
 		public function is_double() {
 			$condition = $this->match_true === is_double( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a double.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a double' );
 
 			return $this;
 		}
 
 		public function is_string() {
 			$condition = $this->match_true === is_string( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a string.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a string' );
 
 			return $this;
 		}
 
 		public function is_resource() {
 			$condition = $this->match_true === is_resource( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a resource.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a resource' );
 
 			return $this;
 		}
 
 		public function is_null() {
 			$condition = $this->match_true === is_null( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a resource.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a resource' );
 
 			return $this;
 		}
@@ -232,13 +246,25 @@
 		}
 
 		public function _or() {
-			$this->or_condition = true;
+			$this->check_state->or_condition();
 
 			return $this;
 		}
 
 		public function aut() {
 			return $this->vel();
+		}
+
+		/**
+		 * @param $reason
+		 */
+		protected function throw_exception( $reason ) {
+			if ( $this->check_state->has_thrown() ) {
+				return;
+			}
+			$this->reason = $this->reason ? $this->reason . ' or ' . $reason : $reason;
+			$this->check_state->throw_exception();
+			throw new $this->excpeption( $this->reason );
 		}
 
 	}
