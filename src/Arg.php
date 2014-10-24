@@ -93,7 +93,7 @@
 		/**
 		 * @var Check
 		 */
-		protected $check_state;
+		protected $check;
 
 		/**
 		 * @return string
@@ -116,11 +116,11 @@
 			$this->value = $value;
 			$this->name = $name;
 			$this->excpeption = $exception ? $exception : 'InvalidArgumentException';
-			$this->check_state = $checkState ? $checkState : new Check( new PassingCheckState() );
+			$this->check = $checkState ? $checkState : new Check( new PassingCheckState() );
 		}
 
 		public function __destruct() {
-			if ( ! $this->check_state->is_passing() ) {
+			if ( ! $this->check->is_passing() ) {
 				$this->throw_exception( $this->reason );
 			}
 		}
@@ -136,15 +136,15 @@
 		 * @return $this
 		 */
 		public function assert( $condition, $reason ) {
-			if ( $this->check_state->is_failed() ) {
+			if ( $this->check->is_failed() ) {
 				$this->throw_exception( $reason );
 			}
 
 			if ( ! $condition ) {
-				$this->check_state->fail();
+				$this->check->fail();
 				$this->reason = $reason;
 			} else {
-				$this->check_state->pass();
+				$this->check->pass();
 			}
 
 			return $this;
@@ -187,7 +187,7 @@
 		}
 
 		public function did_pass() {
-			return $this->check_state->is_passing();
+			return $this->check->is_passing();
 		}
 
 		public function is_int() {
@@ -246,7 +246,7 @@
 		}
 
 		public function _or() {
-			$this->check_state->or_condition();
+			$this->check->or_condition();
 
 			return $this;
 		}
@@ -259,11 +259,11 @@
 		 * @param $reason
 		 */
 		protected function throw_exception( $reason ) {
-			if ( $this->check_state->has_thrown() ) {
+			if ( $this->check->has_thrown() ) {
 				return;
 			}
 			$this->reason = $this->reason ? $this->reason . ' or ' . $reason : $reason;
-			$this->check_state->throw_exception();
+			$this->check->throw_exception();
 			throw new $this->excpeption( $this->reason );
 		}
 
