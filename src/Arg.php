@@ -1,8 +1,6 @@
 <?php
 
 
-	use Doctrine\Instantiator\Exception\InvalidArgumentException;
-
 	class Arg {
 
 		/**
@@ -10,7 +8,7 @@
 		 */
 		protected static $exception;
 
-		/** @var  Arg_Object */
+		/** @var  ArgObject */
 		protected $arg;
 
 		public function __construct( $arg, $arg_name = null ) {
@@ -20,8 +18,8 @@
 		}
 
 		private function get_arg_for_type( $type, $arg, $arg_name ) {
-			$class_name = ucwords( $type . '_Arg' );
-			$class_name = str_replace( ' ', '_', $class_name );
+			$class_name = ucwords( $type . 'Arg' );
+			$class_name = str_replace( ' ', '', $class_name );
 
 			return new $class_name( $type, $arg, $arg_name, self::$exception );
 		}
@@ -45,7 +43,7 @@
 	}
 
 
-	abstract class Arg_Object {
+	abstract class ArgObject {
 
 		/**
 		 * @var mixed
@@ -91,6 +89,16 @@
 		protected $excpeption;
 
 		/**
+		 * @var tad_Arg_Check
+		 */
+		protected $check;
+
+		/**
+		 * @var bool
+		 */
+		protected $has_thrown = false;
+
+		/**
 		 * @return string
 		 */
 		protected function get_negation() {
@@ -106,16 +114,17 @@
 			return $this;
 		}
 
-		public function __construct( $type, $value, $name, $exception ) {
+		public function __construct( $type, $value, $name, $exception, tad_Arg_Check_CheckState $checkState = null ) {
 			$this->type = $type;
 			$this->value = $value;
 			$this->name = $name;
 			$this->excpeption = $exception ? $exception : 'InvalidArgumentException';
+			$this->check = $checkState ? $checkState : new tad_Arg_Check( new tad_Arg_Check_PassingState() );
 		}
 
 		public function __destruct() {
-			if ( $this->reason ) {
-				throw new $this->excpeption( $this->reason );
+			if ( ! $this->check->is_passing() && ! $this->has_thrown ) {
+				$this->throw_exception( $this->reason );
 			}
 		}
 
@@ -123,14 +132,22 @@
 			return $this->name;
 		}
 
+		/**
+		 * @param $condition
+		 * @param $reason
+		 *
+		 * @return $this
+		 */
 		public function assert( $condition, $reason ) {
-			if ( ! $condition && ! $this->skip ) {
-				$this->reason = $this->reason ? $this->reason . ' or ' . $reason : $reason;
-				$this->skip = true;
-			} else if ( $condition && $this->or_condition ) {
-				$this->skip = false;
-				$this->reason = false;
-				$this->or_condition = false;
+			if ( $this->check->is_failed() ) {
+				$this->throw_exception( $reason );
+			}
+
+			if ( ! $condition ) {
+				$this->check->fail();
+				$this->reason = $reason;
+			} else {
+				$this->check->pass();
 			}
 
 			return $this;
@@ -138,21 +155,21 @@
 
 		public function is_bool() {
 			$condition = $this->match_true === is_bool( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a boolean.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a boolean' );
 
 			return $this;
 		}
 
 		public function is_object() {
 			$condition = $this->match_true === is_object( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an object.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an object' );
 
 			return $this;
 		}
 
 		public function is_array() {
 			$condition = $this->match_true === is_array( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an array.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an array' );
 
 			return $this;
 		}
@@ -160,65 +177,65 @@
 		public function is_associative_array() {
 			$this->is_array();
 			$condition = $this->match_true === is_associative_array( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an associative array.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an associative array' );
 
 			return $this;
 		}
 
 		public function is_scalar() {
 			$condition = $this->match_true === is_scalar( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a scalar.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a scalar' );
 
 			return $this;
 		}
 
 		public function did_pass() {
-			return ! (bool) $this->reason;
+			return $this->check->is_passing();
 		}
 
 		public function is_int() {
 			$condition = $this->match_true === is_int( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an int.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an int' );
 
 			return $this;
 		}
 
 		public function is_numeric() {
-			$this->assert( $this->match_true === is_numeric( $this->value ), $this->name . ' must' . $this->get_negation() . ' be an int.' );
+			$this->assert( $this->match_true === is_numeric( $this->value ), $this->name . ' must' . $this->get_negation() . ' be numeric' );
 
 			return $this;
 		}
 
 		public function is_float() {
-			$this->assert( $this->match_true === is_float( $this->value ), $this->name . ' must' . $this->get_negation() . ' be a float.' );
+			$this->assert( $this->match_true === is_float( $this->value ), $this->name . ' must' . $this->get_negation() . ' be a float' );
 
 			return $this;
 		}
 
 		public function is_double() {
 			$condition = $this->match_true === is_double( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a double.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a double' );
 
 			return $this;
 		}
 
 		public function is_string() {
 			$condition = $this->match_true === is_string( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a string.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a string' );
 
 			return $this;
 		}
 
 		public function is_resource() {
 			$condition = $this->match_true === is_resource( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a resource.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a resource' );
 
 			return $this;
 		}
 
 		public function is_null() {
 			$condition = $this->match_true === is_null( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a resource.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a resource' );
 
 			return $this;
 		}
@@ -232,7 +249,7 @@
 		}
 
 		public function _or() {
-			$this->or_condition = true;
+			$this->check->or_condition();
 
 			return $this;
 		}
@@ -241,10 +258,18 @@
 			return $this->vel();
 		}
 
+		/**
+		 * @param $reason
+		 */
+		protected function throw_exception( $reason ) {
+			$this->reason = $this->reason ? $this->reason . ' or ' . $reason : $reason;
+			$this->has_thrown = true;
+			throw new $this->excpeption( $this->reason );
+		}
 	}
 
 
-	abstract class Scalar_Arg extends Arg_Object {
+	abstract class ScalarArg extends ArgObject {
 
 		public function at_least( $value ) {
 			$condition = $this->match_true === $this->value < $value;
@@ -278,22 +303,22 @@
 	}
 
 
-	class  Boolean_Arg extends Scalar_Arg {
+	class  BooleanArg extends ScalarArg {
 
 	}
 
 
-	class  Integer_Arg extends Scalar_Arg {
+	class  IntegerArg extends ScalarArg {
 
 	}
 
 
-	class  Double_Arg extends Scalar_Arg {
+	class  DoubleArg extends ScalarArg {
 
 	}
 
 
-	class  String_Arg extends Scalar_Arg {
+	class  StringArg extends ScalarArg {
 
 		public function length( $min, $max = null ) {
 			$len = strlen( $this->value );
@@ -313,7 +338,7 @@
 	}
 
 
-	class  Array_Arg extends Arg_Object {
+	class  ArrayArg extends ArgObject {
 
 		public function count( $min, $max = null ) {
 			$count = count( $this->value );
@@ -368,7 +393,7 @@
 	}
 
 
-	class  Object_Arg extends Arg_Object {
+	class  ObjectArg extends ArgObject {
 
 		public function is_set( $property ) {
 			$properties = func_get_args();
@@ -382,17 +407,17 @@
 	}
 
 
-	class  Resource_Arg extends Arg_Object {
+	class  ResourceArg extends ArgObject {
 
 	}
 
 
-	class  NULL_Arg extends Arg_Object {
+	class  NULLArg extends ArgObject {
 
 	}
 
 
-	class  Unknown_Type_Arg extends Arg_Object {
+	class  UnknownTypeArg extends ArgObject {
 
 	}
 
