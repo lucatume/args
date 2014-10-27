@@ -239,11 +239,11 @@
 			 * it should allow chaining ors
 			 */
 			public function it_should_allow_chaining_ors() {
-				Arg::_( 'foo' )->is_int()->_or()->is_bool()->_or()->is_string();
+				Arg::_( 'foo', 'First string' )->is_int()->_or()->is_bool()->_or()->is_string();
 
 				$this->setExpectedException( 'InvalidArgumentException' );
 
-				Arg::_( 'foo' )->is_int()->_or()->is_array()->_or()->is_double();
+				Arg::_( 'foo', 'Second string' )->is_int()->_or()->is_array()->_or()->is_double();
 			}
 
 			/**

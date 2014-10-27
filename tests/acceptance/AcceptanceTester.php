@@ -192,7 +192,7 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * Check if current page contains the text specified.
+     * tad_Arg_Check if current page contains the text specified.
      * Specify the css selector to match only specific region.
      *
      * Examples:
@@ -216,7 +216,7 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * Check if current page contains the text specified.
+     * tad_Arg_Check if current page contains the text specified.
      * Specify the css selector to match only specific region.
      *
      * Examples:
@@ -241,7 +241,7 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * Check if current page doesn't contain the text specified.
+     * tad_Arg_Check if current page doesn't contain the text specified.
      * Specify the css selector to match only specific region.
      *
      * Examples:
@@ -265,7 +265,7 @@ class AcceptanceTester extends \Codeception\Actor
     /**
      * [!] Method is generated. Documentation taken from corresponding module.
      *
-     * Check if current page doesn't contain the text specified.
+     * tad_Arg_Check if current page doesn't contain the text specified.
      * Specify the css selector to match only specific region.
      *
      * Examples:

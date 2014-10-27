@@ -1,5 +1,5 @@
 <?php
-abstract class AbstractCheckState implements CheckState
+abstract class tad_Arg_Check_AbstractState implements tad_Arg_Check_State
 {
     /**
      * @throws IllegalStateTransitionException
@@ -21,14 +21,6 @@ abstract class AbstractCheckState implements CheckState
      * @throws IllegalStateTransitionException
      */
     public function or_condition()
-    {
-        throw new IllegalStateTransitionException;
-    }
-
-    /**
-     * @throws IllegalStateTransitionException
-     */
-    public function throw_exception()
     {
         throw new IllegalStateTransitionException;
     }

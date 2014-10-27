@@ -1,12 +1,12 @@
 <?php
-class Check
+class tad_Arg_Check
 {
     /**
-     * @var CheckState
+     * @var tad_Arg_Check_State
      */
     private $state;
 
-    public function __construct(CheckState $state)
+    public function __construct(tad_Arg_Check_State $state)
     {
         $this->setState($state);
     }
@@ -36,19 +36,11 @@ class Check
     }
 
     /**
-     * @throws IllegalStateTransitionException
-     */
-    public function throw_exception()
-    {
-        $this->setState($this->state->throw_exception());
-    }
-
-    /**
      * @return bool
      */
     public function is_passing()
     {
-        return $this->state instanceof PassingCheckState;
+        return $this->state instanceof tad_Arg_Check_PassingState;
     }
 
     /**
@@ -56,7 +48,7 @@ class Check
      */
     public function is_failing()
     {
-        return $this->state instanceof FailingCheckState;
+        return $this->state instanceof tad_Arg_Check_FailingState;
     }
 
     /**
@@ -64,7 +56,7 @@ class Check
      */
     public function is_or_failing()
     {
-        return $this->state instanceof OrFailingCheckState;
+        return $this->state instanceof tad_Arg_Check_OrFailingState;
     }
 
     /**
@@ -72,18 +64,10 @@ class Check
      */
     public function is_failed()
     {
-        return $this->state instanceof FailedCheckState;
+        return $this->state instanceof tad_Arg_Check_FailedState;
     }
 
-    /**
-     * @return bool
-     */
-    public function has_thrown()
-    {
-        return $this->state instanceof ThrownCheckState;
-    }
-
-    private function setState(CheckState $state)
+    private function setState(tad_Arg_Check_State $state)
     {
         $this->state = $state;
     }

@@ -1,8 +1,6 @@
 <?php
 
 
-	use Doctrine\Instantiator\Exception\InvalidArgumentException;
-
 	class Arg {
 
 		/**
@@ -91,9 +89,14 @@
 		protected $excpeption;
 
 		/**
-		 * @var Check
+		 * @var tad_Arg_Check
 		 */
 		protected $check;
+
+		/**
+		 * @var bool
+		 */
+		protected $has_thrown = false;
 
 		/**
 		 * @return string
@@ -111,16 +114,16 @@
 			return $this;
 		}
 
-		public function __construct( $type, $value, $name, $exception, CheckState $checkState = null ) {
+		public function __construct( $type, $value, $name, $exception, tad_Arg_Check_CheckState $checkState = null ) {
 			$this->type = $type;
 			$this->value = $value;
 			$this->name = $name;
 			$this->excpeption = $exception ? $exception : 'InvalidArgumentException';
-			$this->check = $checkState ? $checkState : new Check( new PassingCheckState() );
+			$this->check = $checkState ? $checkState : new tad_Arg_Check( new tad_Arg_Check_PassingState() );
 		}
 
 		public function __destruct() {
-			if ( ! $this->check->is_passing() ) {
+			if ( ! $this->check->is_passing() && ! $this->has_thrown ) {
 				$this->throw_exception( $this->reason );
 			}
 		}
@@ -159,14 +162,14 @@
 
 		public function is_object() {
 			$condition = $this->match_true === is_object( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an object.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an object' );
 
 			return $this;
 		}
 
 		public function is_array() {
 			$condition = $this->match_true === is_array( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an array.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an array' );
 
 			return $this;
 		}
@@ -174,14 +177,14 @@
 		public function is_associative_array() {
 			$this->is_array();
 			$condition = $this->match_true === is_associative_array( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an associative array.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an associative array' );
 
 			return $this;
 		}
 
 		public function is_scalar() {
 			$condition = $this->match_true === is_scalar( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a scalar.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be a scalar' );
 
 			return $this;
 		}
@@ -192,19 +195,19 @@
 
 		public function is_int() {
 			$condition = $this->match_true === is_int( $this->value );
-			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an int.' );
+			$this->assert( $condition, $this->name . ' must' . $this->get_negation() . ' be an int' );
 
 			return $this;
 		}
 
 		public function is_numeric() {
-			$this->assert( $this->match_true === is_numeric( $this->value ), $this->name . ' must' . $this->get_negation() . ' be an int.' );
+			$this->assert( $this->match_true === is_numeric( $this->value ), $this->name . ' must' . $this->get_negation() . ' be numeric' );
 
 			return $this;
 		}
 
 		public function is_float() {
-			$this->assert( $this->match_true === is_float( $this->value ), $this->name . ' must' . $this->get_negation() . ' be a float.' );
+			$this->assert( $this->match_true === is_float( $this->value ), $this->name . ' must' . $this->get_negation() . ' be a float' );
 
 			return $this;
 		}
@@ -259,14 +262,10 @@
 		 * @param $reason
 		 */
 		protected function throw_exception( $reason ) {
-			if ( $this->check->has_thrown() ) {
-				return;
-			}
 			$this->reason = $this->reason ? $this->reason . ' or ' . $reason : $reason;
-			$this->check->throw_exception();
+			$this->has_thrown = true;
 			throw new $this->excpeption( $this->reason );
 		}
-
 	}
 
 
