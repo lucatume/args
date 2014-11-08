@@ -12,8 +12,8 @@
 		protected $arg;
 
 		public function __construct( $arg, $arg_name = null ) {
-			$type = gettype( $arg );
-			$arg_name = $arg_name ? $arg_name : $type;
+			$type      = gettype( $arg );
+			$arg_name  = $arg_name ? $arg_name : $type;
 			$this->arg = $this->get_arg_for_type( $type, $arg, $arg_name );
 		}
 
@@ -115,11 +115,11 @@
 		}
 
 		public function __construct( $type, $value, $name, $exception, tad_Arg_Check_CheckState $checkState = null ) {
-			$this->type = $type;
-			$this->value = $value;
-			$this->name = $name;
+			$this->type       = $type;
+			$this->value      = $value;
+			$this->name       = $name;
 			$this->excpeption = $exception ? $exception : 'InvalidArgumentException';
-			$this->check = $checkState ? $checkState : new tad_Arg_Check( new tad_Arg_Check_PassingState() );
+			$this->check      = $checkState ? $checkState : new tad_Arg_Check( new tad_Arg_Check_PassingState() );
 		}
 
 		public function __destruct() {
@@ -262,7 +262,7 @@
 		 * @param $reason
 		 */
 		protected function throw_exception( $reason ) {
-			$this->reason = $this->reason ? $this->reason . ' or ' . $reason : $reason;
+			$this->reason     = ucfirst( strtolower( $this->reason ? $this->reason . ' or ' . $reason : $reason ) );
 			$this->has_thrown = true;
 			throw new $this->excpeption( $this->reason );
 		}
@@ -321,7 +321,7 @@
 	class  StringArg extends ScalarArg {
 
 		public function length( $min, $max = null ) {
-			$len = strlen( $this->value );
+			$len       = strlen( $this->value );
 			$condition = $this->match_true === ( $len >= $min );
 			$this->assert( $condition, $this->name . ' must have a minimum length of ' . $min );
 
@@ -341,7 +341,7 @@
 	class  ArrayArg extends ArgObject {
 
 		public function count( $min, $max = null ) {
-			$count = count( $this->value );
+			$count     = count( $this->value );
 			$condition = $this->match_true === $count >= $min;
 			$this->assert( $condition, $this->name . ' must contain at least ' . $min . ' elements' );
 			$condition = $max && $this->match_true === $count <= $max;
@@ -430,8 +430,8 @@
 
 	if ( ! function_exists( 'array_has_structure' ) ) {
 		function array_has_structure( array $arr, array $structure ) {
-			$merged = @array_merge_recursive( $arr, $structure );
-			$diffed = @array_diff( $merged, $arr );
+			$merged        = @array_merge_recursive( $arr, $structure );
+			$diffed        = @array_diff( $merged, $arr );
 			$has_structure = count( $diffed ) === 0;
 
 			return $has_structure;
@@ -440,8 +440,8 @@
 
 	if ( ! function_exists( 'array_extends_structure' ) ) {
 		function array_extends_structure( array $arr, array $structure ) {
-			$merged = @array_merge_recursive( $arr, $structure );
-			$diffed = @array_diff( $merged, $arr );
+			$merged         = @array_merge_recursive( $arr, $structure );
+			$diffed         = @array_diff( $merged, $arr );
 			$same_structure = count( @array_intersect_key( $structure, $diffed ) ) === 0;
 
 			return $same_structure;
