@@ -262,7 +262,8 @@
 		 * @param $reason
 		 */
 		protected function throw_exception( $reason ) {
-			$this->reason     = ucfirst( strtolower( $this->reason ? $this->reason . ' or ' . $reason : $reason ) );
+			$this->reason     = ucfirst( strtolower( $this->check->is_or_failing() ? $this->reason . ' or ' . $reason : $reason ) );
+//			$this->reason     = ucfirst( strtolower( $this->reason ? $this->reason . ' or ' . $reason : $reason ) );
 			$this->has_thrown = true;
 			throw new $this->excpeption( $this->reason );
 		}

@@ -305,7 +305,15 @@
 				$this->setExpectedException( 'InvalidArgumentException' );
 				$sut = Arg::_( [ 'foo' => 'baz' ] )->extends_structure( $model );
 			}
-		}
 
+			/**
+			 * @test
+			 * it should return proper single message when checking a string
+			 */
+			public function it_should_return_proper_single_message_when_checking_a_string() {
+				$this->setExpectedException( '\Exception', 'String arg must be a string' );
+				\Arg::_( 23, 'String arg' )->is_string();
+			}
+		}
 
 	}
