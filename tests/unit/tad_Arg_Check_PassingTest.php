@@ -37,6 +37,7 @@
 			$this->assertFalse( $this->tad_arg_check->is_or_failing() );
 		}
 
+<<<<<<< Updated upstream
 		/**
 		 * @covers tad_Arg_Check::is_failed
 		 */
@@ -64,3 +65,16 @@
 			$this->assertTrue( $this->tad_arg_check->is_failing() );
 		}
 	}
+=======
+    /**
+     * @covers tad_Arg_Check::or_condition
+     * @covers tad_Arg_Check_PassingState::or_condition
+     * @uses   tad_Arg_Check::is_passing
+     */
+    public function testCanApplyOrCondition()
+    {
+        $this->tad_arg_check->or_condition();
+        $this->assertFalse($this->tad_arg_check->is_passing());
+    }
+}
+>>>>>>> Stashed changes
