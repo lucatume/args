@@ -99,6 +99,16 @@
 		protected $has_thrown = false;
 
 		/**
+		 * @var bool
+		 */
+		protected $should_return;
+
+		/**
+		 * @var mixed
+		 */
+		protected $return_value;
+
+		/**
 		 * @return string
 		 */
 		protected function get_negation() {
@@ -123,9 +133,19 @@
 		}
 
 		public function __destruct() {
-			if ( ! $this->check->is_passing() && ! $this->has_thrown ) {
+			if ( $this->is_failing() ) {
 				$this->throw_exception( $this->reason );
 			}
+		}
+
+		public function else_throw( $exception ) {
+			if ( $this->is_failing() ) {
+				$this->has_thrown = true;
+
+				throw $exception;
+			}
+
+			return $this;
 		}
 
 		public function get_name() {
@@ -265,6 +285,15 @@
 			$this->reason     = ucfirst( strtolower( $this->reason ? $this->reason . ' or ' . $reason : $reason ) );
 			$this->has_thrown = true;
 			throw new $this->excpeption( $this->reason );
+		}
+
+		/**
+		 * @return bool
+		 */
+		protected function is_failing() {
+			$is_failing = ! $this->check->is_passing() && ! $this->has_thrown;
+
+			return $is_failing;
 		}
 	}
 

@@ -50,7 +50,7 @@
 			 * it should allow asserting
 			 */
 			public function it_should_allow_asserting() {
-				$sut = Arg::_( 'foo' );
+				$sut     = Arg::_( 'foo' );
 				$message = 'Foo!';
 				$this->setExpectedException( 'InvalidArgumentException', $message );
 
@@ -63,7 +63,7 @@
 			 */
 			public function it_should_allow_defaulting_an_array() {
 				$model = [ 'foo' => 'baz', 'some' => 'more' ];
-				$in = [ 'some' => 23, 'bar' => 21 ];
+				$in    = [ 'some' => 23, 'bar' => 21 ];
 
 				$sut = Arg::_( $in )->defaults( $model );
 
@@ -105,9 +105,9 @@
 			 * it should allow checking an object has a property
 			 */
 			public function it_should_allow_checking_an_object_has_a_property() {
-				$obj = new stdClass();
+				$obj       = new stdClass();
 				$obj->some = 'foo';
-				$sut = Arg::_( $obj )->is_set( 'some' );
+				$sut       = Arg::_( $obj )->is_set( 'some' );
 
 				$this->setExpectedException( 'InvalidArgumentException' );
 				$sut->is_set( 'more' );
@@ -118,10 +118,10 @@
 			 * it should allow checkin an object has many properties
 			 */
 			public function it_should_allow_checkin_an_object_has_many_properties() {
-				$obj = new stdClass();
+				$obj       = new stdClass();
 				$obj->some = 'foo';
-				$obj->foo = 21;
-				$sut = Arg::_( $obj )->is_set( 'some', 'foo' );
+				$obj->foo  = 21;
+				$sut       = Arg::_( $obj )->is_set( 'some', 'foo' );
 
 				$this->setExpectedException( 'InvalidArgumentException' );
 				$sut->is_set( 'more', 'one' );
@@ -143,9 +143,9 @@
 			 * it should allow setting negation for next method using not
 			 */
 			public function it_should_allow_setting_negation_for_next_method_using_not() {
-				$obj = new stdClass();
+				$obj       = new stdClass();
 				$obj->some = 'foo';
-				$obj->foo = 21;
+				$obj->foo  = 21;
 				$this->setExpectedException( 'InvalidArgumentException' );
 
 				$sut = Arg::_( $obj )->not()->is_set( 'some' );
@@ -305,7 +305,49 @@
 				$this->setExpectedException( 'InvalidArgumentException' );
 				$sut = Arg::_( [ 'foo' => 'baz' ] )->extends_structure( $model );
 			}
+
+			/**
+			 * @test
+			 * it should throw specified exception using else_throw
+			 */
+			public function it_should_throw_specified_exception_using_else_throw() {
+				$this->setExpectedException( 'MyException', 'Hello there' );
+
+				Arg::_( 'foo' )->is_int()->else_throw( new \MyException( 'Hello there' ) );
+			}
+
+			/**
+			 * @test
+			 * it should allow chaining on passing checks
+			 */
+			public function it_should_allow_chaining_on_passing_checks() {
+				Arg::_( 'foo' )->is_string()->else_throw( new \MyException() );
+			}
+
+			/**
+			 * @test
+			 * it should allow going on with the chain on passing checks
+			 */
+			public function it_should_allow_going_on_with_the_chain_on_passing_checks() {
+				Arg::_( '23' )->is_string()->else_throw( new \MyException() )->is_numeric();
+			}
+
+			/**
+			 * @test
+			 * it should allow faling when needed
+			 */
+			public function it_should_allow_faling_when_needed() {
+				$this->setExpectedException( 'MyException', 'not an array' );
+
+				Arg::_( '23' )->is_string()->else_throw( new \MyException( 'not string' ) )->is_numeric()
+				   ->else_throw( new \MyException( 'not numeric' ) )->is_array()
+				   ->else_throw( new \MyException( 'not an array' ) );
+			}
 		}
 
+
+		class MyException extends Exception {
+
+		}
 
 	}
