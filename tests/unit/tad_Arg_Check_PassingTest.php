@@ -77,6 +77,6 @@ class tad_Arg_Check_PassingTest extends PHPUnit_Framework_TestCase
     public function testCanApplyOrCondition()
     {
         $this->tad_arg_check->or_condition();
-        $this->assertTrue($this->tad_arg_check->is_passing());
+        $this->assertFalse($this->tad_arg_check->is_passing());
     }
 }

@@ -14,7 +14,7 @@ class tad_Arg_Check_PassingState extends tad_Arg_Check_AbstractState
      */
     public function or_condition()
     {
-        return new tad_Arg_Check_PassingState;
+        return new tad_Arg_Check_OrPassingState;
     }
 
     /**
