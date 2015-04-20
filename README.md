@@ -59,6 +59,7 @@ Each method is defined in a positive logic: nothing will happen if the argument 
 * `is_array()` - checks if value is an array, same as `is_array()` method
 * `is_associative_array()` - checks if value is an associative array
 * `is_object()` - checks if value is an object, same as `is_object()` method
+* `else_throw($exception)` - throws the specified exception if the checks are failing; `$exception` can be an object instance or a class name. If the class name ends in `Exception` then that part of the class name can be omitted (e.g. "NotGoodException" to "NotGood")
 
 ### Scalar methods
 If an argument is a scalar then additional check methods are available:
