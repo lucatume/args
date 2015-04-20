@@ -343,6 +343,26 @@
 				   ->else_throw( new \MyException( 'not numeric' ) )->is_array()
 				   ->else_throw( new \MyException( 'not an array' ) );
 			}
+
+			/**
+			 * @test
+			 * it should allow specifying the exception class
+			 */
+			public function it_should_allow_specifying_the_exception_class() {
+				$this->setExpectedException( 'MyException', 'not numeric' );
+
+				Arg::_( 'foo' )->is_numeric()->else_throw( 'MyException', 'not numeric' );
+			}
+
+			/**
+			 * @test
+			 * it should allow specifying the exception class minus Exception
+			 */
+			public function it_should_allow_specifying_the_exception_class_minus_exception() {
+				$this->setExpectedException( 'MyException', 'not numeric' );
+
+				Arg::_( 'foo' )->is_numeric()->else_throw( 'My', 'not numeric' );
+			}
 		}
 
 

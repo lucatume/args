@@ -138,11 +138,17 @@
 			}
 		}
 
-		public function else_throw( $exception ) {
+		public function else_throw( $exception, $message = null ) {
 			if ( $this->is_failing() ) {
 				$this->has_thrown = true;
-
-				throw $exception;
+				if ( is_object( $exception ) ) {
+					throw $exception;
+				} else if ( class_exists( $exception ) ) {
+					throw new $exception( $message );
+				} else {
+					$exception = $exception . 'Exception';
+					throw new $exception ( $message );
+				}
 			}
 
 			return $this;
@@ -282,7 +288,7 @@
 		 * @param $reason
 		 */
 		protected function throw_exception( $reason ) {
-			$this->reason     = ucfirst( strtolower( $this->check->is_or_failing() ? $this->reason . ' or ' . $reason : $reason ) );
+			$this->reason = ucfirst( strtolower( $this->check->is_or_failing() ? $this->reason . ' or ' . $reason : $reason ) );
 //			$this->reason     = ucfirst( strtolower( $this->reason ? $this->reason . ' or ' . $reason : $reason ) );
 			$this->has_thrown = true;
 			throw new $this->excpeption( $this->reason );
