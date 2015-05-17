@@ -303,8 +303,10 @@ abstract class ArgObject {
 		return $is_failing;
 	}
 
-	public function in( $first_value ) {
-		$legit = func_get_args();
+	public function in( $legit ) {
+		if (!is_array($legit)){
+			$legit = func_get_args();
+		}
 
 		$this->assert( in_array( $this->value, $legit ), ' must be one among these values: ' . print_r( $legit, true ) );
 

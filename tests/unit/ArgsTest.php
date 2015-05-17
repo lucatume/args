@@ -382,6 +382,27 @@ namespace {
 			Arg::_( 34 )->in( 'foo', 'baz' );
 		}
 
+	    /**
+	     * @test
+	     * it should allow checking if argument is in array
+	     */
+	    public function it_should_allow_checking_if_argument_is_in_array()
+	    {
+
+		Arg::_( 'foo' )->in( ['foo', 'baz', 'bar'] );
+	    }
+
+        /**
+         * @test
+         * it should throw if argument is not in array
+         */
+        public function it_should_throw_if_argument_is_not_in_array()
+        {
+			$this->setExpectedException( 'InvalidArgumentException' );
+
+			Arg::_( 34 )->in( ['foo', 'baz', 'bar'] );
+        }
+
 		/**
 		 * @test
 		 * it should allow asserting an object has a property
