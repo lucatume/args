@@ -1,5 +1,8 @@
 <?php
 
+if( class_exists( 'Arg' )) {
+	return;
+}
 
 class Arg {
 
