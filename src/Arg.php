@@ -1,5 +1,34 @@
 <?php
 
+/**
+ * Utility functions
+ */
+if ( ! function_exists( 'is_associative_array' ) ) {
+	function is_associative_array( $var ) {
+		return is_array( $var ) and ( array_values( $var ) !== $var );
+	}
+}
+
+if ( ! function_exists( 'array_has_structure' ) ) {
+	function array_has_structure( array $arr, array $structure ) {
+		$merged        = @array_merge_recursive( $arr, $structure );
+		$diffed        = @array_diff( $merged, $arr );
+		$has_structure = count( $diffed ) === 0;
+
+		return $has_structure;
+	}
+}
+
+if ( ! function_exists( 'array_extends_structure' ) ) {
+	function array_extends_structure( array $arr, array $structure ) {
+		$merged         = @array_merge_recursive( $arr, $structure );
+		$diffed         = @array_diff( $merged, $arr );
+		$same_structure = count( @array_intersect_key( $structure, $diffed ) ) === 0;
+
+		return $same_structure;
+	}
+}
+
 if( class_exists( 'Arg' )) {
 	return;
 }
@@ -520,29 +549,3 @@ class  UnknownTypeArg extends ArgObject {
 
 }
 
-
-if ( ! function_exists( 'is_associative_array' ) ) {
-	function is_associative_array( $var ) {
-		return is_array( $var ) and ( array_values( $var ) !== $var );
-	}
-}
-
-if ( ! function_exists( 'array_has_structure' ) ) {
-	function array_has_structure( array $arr, array $structure ) {
-		$merged        = @array_merge_recursive( $arr, $structure );
-		$diffed        = @array_diff( $merged, $arr );
-		$has_structure = count( $diffed ) === 0;
-
-		return $has_structure;
-	}
-}
-
-if ( ! function_exists( 'array_extends_structure' ) ) {
-	function array_extends_structure( array $arr, array $structure ) {
-		$merged         = @array_merge_recursive( $arr, $structure );
-		$diffed         = @array_diff( $merged, $arr );
-		$same_structure = count( @array_intersect_key( $structure, $diffed ) ) === 0;
-
-		return $same_structure;
-	}
-}
