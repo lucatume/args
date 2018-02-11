@@ -4,7 +4,7 @@
     "require-dev": {
         "codeception/codeception": "*"
     },
-    "license": "GPL2",
+    "license": "GPL-2.0",
     "authors": [
         {
             "name": "Luca Tumedei",
